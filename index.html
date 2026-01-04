@@ -62,17 +62,17 @@
   <label>Telefone</label>
   <input id="telefone" />
 
-  <label>Serviço</label>
+    <label>Serviço</label>
   <select id="servico">
-    <option value="Corte" data-valor="30">Corte de Cabelo - R$ 30,00</option>
+    <option value="Corte de Cabelo" data-valor="30">Corte de Cabelo - R$ 30,00</option>
     <option value="Luzes" data-valor="50">Luzes - R$ 50,00</option>
     <option value="Barba" data-valor="25">Barba - R$ 25,00</option>
-    <option value="Corte + Luzes" data-valor="80">Corte de Cabelo + Luzes - R$ 80,00</option>
-    <option value="Corte + Barba" data-valor="55">Corte de Cabelo + Barba - R$ 55,00</option>
-    <option value="Corte + Luzes + Barba" data-valor="105">Corte de Cabelo + Luzes + Barba - R$ 105,00</option>
+    <option value="Corte de Cabelo & Luzes" data-valor="80">Corte de Cabelo & Luzes - R$ 80,00</option>
+    <option value="Cortede Cabelo & Barba" data-valor="55">Corte de Cabelo & Barba - R$ 55,00</option>
+    <option value="Corte de Cabelo & Luzes + Barba" data-valor="105">Corte de Cabelo, Luzes & Barba - R$ 105,00</option>
   </select>
 
-  <p id="valor" style="margin-top:10px;font-weight:bold">Valor: R$ 30,00</p>
+  <p id="valor" style="margin-top:10px;font-weight:bold">Valor: R$ 30</p>
 
   <label>Forma de pagamento</label>
   <select id="pagamento">
@@ -96,7 +96,7 @@
     const diaSemana = dataSelecionada.getDay(); // 4 = quinta-feira
 
     if (diaSemana === 4) {
-      mostrarModalGenerico('Aviso','Preencha todos os campos corretamente.');
+      mostrarModalGenerico('Aviso','Não Atendemos de quinta.');
       dataInput.value = '';
       document.getElementById('hora').innerHTML = '';
     }
@@ -169,7 +169,7 @@ function fecharModal() {
 <script>
 const barbeiroWhatsApp = '5515991092185'; // TROQUE PELO NÚMERO DO BARBEIRO
 
-const horariosBase = ['09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00'];
+const horariosBase = ['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
 
 function carregarHorarios() {
   const data = document.getElementById('data').value;
