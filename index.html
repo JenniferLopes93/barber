@@ -61,9 +61,22 @@
 
   <label>Serviço</label>
   <select id="servico">
-    <option>Corte</option>
-    <option>Barba</option>
-    <option>Corte + Barba</option>
+    <option value="Corte" data-valor="30">Corte - R$ 30</option>
+    <option value="Luzes" data-valor="50">Luzes - R$ 50</option>
+    <option value="Barba" data-valor="25">Barba - R$ 25</option>
+    <option value="Corte + Luzes" data-valor="80">Corte + Luzes - R$ 80</option>
+    <option value="Corte + Barba" data-valor="55">Corte + Barba - R$ 55</option>
+    <option value="Corte + Luzes + Barba" data-valor="105">Corte + Luzes + Barba - R$ 105</option>
+  </select>
+
+  <p id="valor" style="margin-top:10px;font-weight:bold">Valor: R$ 30</p>
+
+  <label>Forma de pagamento</label>
+  <select id="pagamento">
+    <option value="Pix">Pix</option>
+    <option value="Dinheiro">Dinheiro</option>
+    <option value="Cartão de Débito">Cartão de Débito</option>
+    <option value="Cartão de Crédito">Cartão de Crédito</option>
   </select>
 
   <label>Data</label>
@@ -78,7 +91,7 @@
 </div>
 
 <script>
-const barbeiroWhatsApp = '5515991092185'; // TROQUE PELO NÚMERO DO BARBEIRO
+const barbeiroWhatsApp = '5599999999999'; // TROQUE PELO NÚMERO DO BARBEIRO
 
 const horariosBase = ['09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00'];
 
@@ -102,10 +115,20 @@ function carregarHorarios() {
 
 document.getElementById('data').addEventListener('change', carregarHorarios);
 
+function atualizarValor() {
+  const servicoSelect = document.getElementById('servico');
+  const valor = servicoSelect.options[servicoSelect.selectedIndex].dataset.valor;
+  document.getElementById('valor').innerText = `Valor: R$ ${valor}`;
+}
+
+document.getElementById('servico').addEventListener('change', atualizarValor);
+
 function agendar() {
-  const nome = nome.value;
-  const telefone = telefone.value;
-  const servico = servico.value;
+  const nome = document.getElementById('nome').value;
+  const telefone = document.getElementById('telefone').value;
+  const servicoSelect = document.getElementById('servico');
+  const servico = servicoSelect.value;
+  const valor = servicoSelect.options[servicoSelect.selectedIndex].dataset.valor;
   const data = document.getElementById('data').value;
   const hora = document.getElementById('hora').value;
 
@@ -114,13 +137,15 @@ function agendar() {
     return;
   }
 
-  const agendamento = { nome, telefone, servico, data, hora };
+  const pagamento = document.getElementById('pagamento').value;
+
+  const agendamento = { nome, telefone, servico, valor, pagamento, data, hora };
 
   const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
   agendamentos.push(agendamento);
   localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
 
-  const mensagem = `📅 NOVO AGENDAMENTO%0A👤 ${nome}%0A📞 ${telefone}%0A✂️ ${servico}%0A📆 ${data}%0A⏰ ${hora}`;
+  const mensagem = `📅 NOVO AGENDAMENTO%0A👤 ${nome}%0A📞 ${telefone}%0A✂️ ${servico}%0A💰 R$ ${valor}%0A💳 ${pagamento}%0A📆 ${data}%0A⏰ ${hora}`;
 
   window.open(`https://wa.me/${barbeiroWhatsApp}?text=${mensagem}`, '_blank');
 
