@@ -64,17 +64,17 @@
 
   <label>Serviço</label>
   <select id="servico">
-    <option value="Corte de Cabelo" data-valor="30">Corte - R$ 30,00</option>
+    <option value="Corte" data-valor="30">Corte de Cabelo - R$ 30,00</option>
     <option value="Luzes" data-valor="50">Luzes - R$ 50,00</option>
     <option value="Barba" data-valor="25">Barba - R$ 25,00</option>
-    <option value="Corte de Cabelo & Luzes" data-valor="80">Corte + Luzes - R$ 80,00</option>
-    <option value="Corte de Cabelo & Barba" data-valor="55">Corte + Barba - R$ 55,00</option>
-    <option value="Corte de Cabelo & Luzes + Barba" data-valor="105">Corte + Luzes + Barba - R$ 105,00</option>
+    <option value="Corte + Luzes" data-valor="80">Corte de Cabelo + Luzes - R$ 80,00</option>
+    <option value="Corte + Barba" data-valor="55">Corte de Cabelo + Barba - R$ 55,00</option>
+    <option value="Corte + Luzes + Barba" data-valor="105">Corte de Cabelo + Luzes + Barba - R$ 105,00</option>
   </select>
 
   <p id="valor" style="margin-top:10px;font-weight:bold">Valor: R$ 30,00</p>
 
-  <label>Forma de Pagamento</label>
+  <label>Forma de pagamento</label>
   <select id="pagamento">
     <option value="Pix">Pix</option>
     <option value="Dinheiro">Dinheiro</option>
@@ -96,7 +96,7 @@
     const diaSemana = dataSelecionada.getDay(); // 4 = quinta-feira
 
     if (diaSemana === 4) {
-      alert('Não atendemos às quintas-feiras. Por favor, escolha outro dia.');
+      mostrarModalGenerico('Aviso','Preencha todos os campos corretamente.');
       dataInput.value = '';
       document.getElementById('hora').innerHTML = '';
     }
@@ -108,12 +108,51 @@ function mostrarModal() {
 function fecharModal() {
   document.getElementById('modal').style.display = 'none';
 }
+function cancelarAgendamento() {
+  const telefone = document.getElementById('telefone').value;
+  const data = document.getElementById('data').value;
+  const hora = document.getElementById('hora').value;
+
+  if (!telefone || !data || !hora) {
+    mostrarModalGenerico('Aviso','Preencha todos os campos corretamente.');
+    return;
+  }
+
+  let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+
+  const totalAntes = agendamentos.length;
+
+  agendamentos = agendamentos.filter(a => !(a.telefone === telefone && a.data === data && a.hora === hora));
+
+  if (agendamentos.length === totalAntes) {
+    mostrarModalGenerico('Aviso','Preencha todos os campos corretamente.');
+    return;
+  }
+
+  localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+
+  mostrarModalGenerico('Aviso','Preencha todos os campos corretamente.');
+
+  carregarHorarios();
+}
+function mostrarModalGenerico(titulo, mensagem) {
+  const modal = document.getElementById('modal');
+  modal.querySelector('h2').innerText = titulo;
+  modal.querySelector('p').innerText = mensagem;
+  modal.style.display = 'flex';
+}
+
+function fecharModal() {
+  document.getElementById('modal').style.display = 'none';
+}
 </script>
 
   <label>Horário</label>
   <select id="hora"></select>
 
   <button onclick="agendar()">Confirmar</button>
+
+  <button onclick="cancelarAgendamento()" style="margin-top:10px;background:#444;color:#fff;">Cancelar Agendamento</button>
 
   <div class="success" id="success">Agendamento confirmado!</div>
 
@@ -170,7 +209,7 @@ function agendar() {
   const hora = document.getElementById('hora').value;
 
   if (!nome || !telefone || !data || !hora) {
-    alert('Preencha todos os campos');
+    mostrarModalGenerico('Aviso','Preencha todos os campos corretamente.');
     return;
   }
 
