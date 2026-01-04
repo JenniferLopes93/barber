@@ -91,7 +91,7 @@
 </div>
 
 <script>
-const barbeiroWhatsApp = '5515991092185'; // TROQUE PELO NÚMERO DO BARBEIRO
+const barbeiroWhatsApp = '5599999999999'; // TROQUE PELO NÚMERO DO BARBEIRO
 
 const horariosBase = ['09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00'];
 
@@ -145,7 +145,9 @@ function agendar() {
   agendamentos.push(agendamento);
   localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
 
-  const mensagem = `📅 NOVO AGENDAMENTO%0A👤 ${nome}%0A📞 ${telefone}%0A✂️ ${servico}%0A💰 R$ ${valor}%0A💳 ${pagamento}%0A📆 ${data}%0A⏰ ${hora}`;
+  const dataFormatada = data.split('-').reverse().join('/');
+
+  const mensagem = `📅 NOVO AGENDAMENTO%0A👤 ${nome}%0A📞 ${telefone}%0A✂️ ${servico}%0A💰 R$ ${valor}%0A💳 ${pagamento}%0A📆 ${dataFormatada}%0A⏰ ${hora}`;
 
   window.open(`https://wa.me/${barbeiroWhatsApp}?text=${mensagem}`, '_blank');
 
