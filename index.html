@@ -25,103 +25,108 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+    h1 { text-align: center; }
 
-    label {
-      display: block;
-      margin-top: 12px;
-      margin-bottom: 6px;
-      font-size: 14px;
-    }
+    label { margin-top: 12px; display: block; }
 
     input, select, button {
       width: 100%;
       padding: 10px;
       border-radius: 8px;
       border: none;
-      font-size: 14px;
+      margin-top: 6px;
     }
 
-    input, select {
-      background: #2a2a2a;
-      color: #fff;
-    }
+    input, select { background: #2a2a2a; color: #fff; }
 
     button {
       margin-top: 20px;
       background: #c89b3c;
-      color: #000;
       font-weight: bold;
       cursor: pointer;
     }
 
-    button:hover {
-      opacity: 0.9;
-    }
-
-    .success {
-      margin-top: 16px;
-      color: #4caf50;
-      text-align: center;
-      display: none;
-    }
+    .success { display:none; color:#4caf50; text-align:center; margin-top:15px; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Agendar Horário</h1>
+<div class="container">
+  <h1>Agendar Horário</h1>
 
-    <label for="nome">Nome do cliente</label>
-    <input type="text" id="nome" placeholder="Digite seu nome" />
+  <label>Nome</label>
+  <input id="nome" />
 
-    <label for="telefone">Telefone</label>
-    <input type="tel" id="telefone" placeholder="(00) 00000-0000" />
+  <label>Telefone</label>
+  <input id="telefone" />
 
-    <label for="servico">Serviço</label>
-    <select id="servico">
-      <option>Corte de cabelo</option>
-      <option>Barba</option>
-      <option>Corte + Barba</option>
-    </select>
+  <label>Serviço</label>
+  <select id="servico">
+    <option>Corte</option>
+    <option>Barba</option>
+    <option>Corte + Barba</option>
+  </select>
 
-    <label for="data">Data</label>
-    <input type="date" id="data" />
+  <label>Data</label>
+  <input type="date" id="data" />
 
-    <label for="hora">Horário</label>
-    <select id="hora">
-      <option>09:00</option>
-      <option>10:00</option>
-      <option>11:00</option>
-      <option>13:00</option>
-      <option>14:00</option>
-      <option>15:00</option>
-      <option>16:00</option>
-      <option>17:00</option>
-    </select>
+  <label>Horário</label>
+  <select id="hora"></select>
 
-    <button onclick="agendar()">Confirmar Agendamento</button>
+  <button onclick="agendar()">Confirmar</button>
 
-    <div class="success" id="success">
-      Horário agendado com sucesso!
-    </div>
-  </div>
+  <div class="success" id="success">Agendamento confirmado!</div>
+</div>
 
-  <script>
-    function agendar() {
-      const nome = document.getElementById('nome').value;
-      const telefone = document.getElementById('telefone').value;
-      const data = document.getElementById('data').value;
+<script>
+const barbeiroWhatsApp = '5515991092185'; // TROQUE PELO NÚMERO DO BARBEIRO
 
-      if (!nome || !telefone || !data) {
-        alert('Preencha todos os campos');
-        return;
-      }
+const horariosBase = ['09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00'];
 
-      document.getElementById('success').style.display = 'block';
+function carregarHorarios() {
+  const data = document.getElementById('data').value;
+  const select = document.getElementById('hora');
+  select.innerHTML = '';
+
+  const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+  const ocupados = agendamentos.filter(a => a.data === data).map(a => a.hora);
+
+  horariosBase.forEach(h => {
+    if (!ocupados.includes(h)) {
+      const opt = document.createElement('option');
+      opt.value = h;
+      opt.textContent = h;
+      select.appendChild(opt);
     }
-  </script>
+  });
+}
+
+document.getElementById('data').addEventListener('change', carregarHorarios);
+
+function agendar() {
+  const nome = nome.value;
+  const telefone = telefone.value;
+  const servico = servico.value;
+  const data = document.getElementById('data').value;
+  const hora = document.getElementById('hora').value;
+
+  if (!nome || !telefone || !data || !hora) {
+    alert('Preencha tudo');
+    return;
+  }
+
+  const agendamento = { nome, telefone, servico, data, hora };
+
+  const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+  agendamentos.push(agendamento);
+  localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+
+  const mensagem = `📅 NOVO AGENDAMENTO%0A👤 ${nome}%0A📞 ${telefone}%0A✂️ ${servico}%0A📆 ${data}%0A⏰ ${hora}`;
+
+  window.open(`https://wa.me/${barbeiroWhatsApp}?text=${mensagem}`, '_blank');
+
+  document.getElementById('success').style.display = 'block';
+  carregarHorarios();
+}
+</script>
 </body>
 </html>
