@@ -61,15 +61,15 @@
 
   <label>Serviço</label>
   <select id="servico">
-    <option value="Corte" data-valor="30">Corte - R$ 30</option>
-    <option value="Luzes" data-valor="50">Luzes - R$ 50</option>
-    <option value="Barba" data-valor="25">Barba - R$ 25</option>
-    <option value="Corte + Luzes" data-valor="80">Corte + Luzes - R$ 80</option>
-    <option value="Corte + Barba" data-valor="55">Corte + Barba - R$ 55</option>
-    <option value="Corte + Luzes + Barba" data-valor="105">Corte + Luzes + Barba - R$ 105</option>
+    <option value="Corte" data-valor="30">Corte - R$ 30,00</option>
+    <option value="Luzes" data-valor="50">Luzes - R$ 50,00</option>
+    <option value="Barba" data-valor="25">Barba - R$ 25,00</option>
+    <option value="Corte + Luzes" data-valor="80">Corte + Luzes - R$ 80,00</option>
+    <option value="Corte + Barba" data-valor="55">Corte + Barba - R$ 55,00</option>
+    <option value="Corte + Luzes + Barba" data-valor="105">Corte + Luzes + Barba - R$ 105,00</option>
   </select>
 
-  <p id="valor" style="margin-top:10px;font-weight:bold">Valor: R$ 30</p>
+  <p id="valor" style="margin-top:10px;font-weight:bold">Valor: R$ 30,00</p>
 
   <label>Forma de pagamento</label>
   <select id="pagamento">
@@ -81,6 +81,12 @@
 
   <label>Data</label>
   <input type="date" id="data" />
+<script>
+  // Bloquear datas passadas
+  const dataInput = document.getElementById('data');
+  const hoje = new Date().toISOString().split('T')[0];
+  dataInput.setAttribute('min', hoje);
+</script>
 
   <label>Horário</label>
   <select id="hora"></select>
@@ -93,7 +99,7 @@
 <script>
 const barbeiroWhatsApp = '5515991092185'; // TROQUE PELO NÚMERO DO BARBEIRO
 
-const horariosBase = ['09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00'];
+const horariosBase = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00'];
 
 function carregarHorarios() {
   const data = document.getElementById('data').value;
