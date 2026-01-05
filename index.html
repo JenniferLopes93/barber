@@ -15,45 +15,49 @@
       min-height: 100vh;
       margin: 0;
     }
-
     .container {
       background: #1c1c1c;
       padding: 24px;
-      border-radius: 12px;
+      border-radius: 16px;
       width: 100%;
       max-width: 420px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     }
-
-    h1 { text-align: center; }
-
-    label { margin-top: 12px; display: block; }
-
+    h1 { text-align: center; margin-bottom: 10px; }
+    label { display:block; margin-top:12px; }
     input, select, button {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      margin-top: 6px;
+      width:100%;
+      padding:10px;
+      margin-top:6px;
+      border:none;
+      border-radius:8px;
+      font-size:14px;
     }
-
-    input, select { background: #2a2a2a; color: #fff; }
-
+    input, select { background:#2a2a2a; color:#fff; }
     button {
-      margin-top: 20px;
-      background: #c89b3c;
-      font-weight: bold;
-      cursor: pointer;
+      margin-top:20px;
+      background:#c89b3c;
+      font-weight:bold;
+      cursor:pointer;
     }
-
-    .success { display:none; color:#4caf50; text-align:center; margin-top:15px; }
+    a.cancelar {
+      display:block;
+      margin-top:10px;
+      text-align:center;
+      background:#444;
+      color:#fff;
+      padding:10px;
+      border-radius:8px;
+      text-decoration:none;
+    }
   </style>
 </head>
 <body>
 <div class="container">
-  <div style="text-align:center; margin-bottom:16px;">
-    <img src="Barber.png" alt="Logo Barbearia" style="max-width:140px; width:100%;" />
+  <div style="text-align:center;margin-bottom:10px;">
+    <img src="Barber.png" style="max-width:140px;width:100%;" />
   </div>
+
   <h1>Agendar Horário</h1>
 
   <label>Nome</label>
@@ -62,174 +66,117 @@
   <label>Telefone</label>
   <input id="telefone" />
 
-    <label>Serviço</label>
+  <label>Serviço</label>
   <select id="servico">
-    <option value="Corte de Cabelo" data-valor="30">Corte de Cabelo - R$ 30,00</option>
+    <option value="Corte de cabelo" data-valor="30">Corte de cabelo - R$ 30,00</option>
     <option value="Luzes" data-valor="50">Luzes - R$ 50,00</option>
     <option value="Barba" data-valor="25">Barba - R$ 25,00</option>
-    <option value="Corte de Cabelo & Luzes" data-valor="80">Corte de Cabelo & Luzes - R$ 80,00</option>
-    <option value="Cortede Cabelo & Barba" data-valor="55">Corte de Cabelo & Barba - R$ 55,00</option>
-    <option value="Corte de Cabelo & Luzes + Barba" data-valor="105">Corte de Cabelo, Luzes & Barba - R$ 105,00</option>
+    <option value="Corte de cabelo & Luzes" data-valor="80">Corte de cabelo & Luzes - R$ 80,00</option>
+    <option value="Corte de cabelo & Barba" data-valor="55">Corte de cabelo & Barba - R$ 55,00</option>
+    <option value="Corte de cabelo, Luzes & Barba" data-valor="105">Corte de cabelo, Luzes & Barba - R$ 105,00</option>
   </select>
 
-  <p id="valor" style="margin-top:10px;font-weight:bold">Valor: R$ 30</p>
+  <p id="valor" style="margin-top:10px;font-weight:bold">Valor: R$ 30,00</p>
 
   <label>Forma de pagamento</label>
   <select id="pagamento">
-    <option value="Pix">Pix</option>
-    <option value="Dinheiro">Dinheiro</option>
-    <option value="Cartão de Débito">Cartão de Débito</option>
-    <option value="Cartão de Crédito">Cartão de Crédito</option>
+    <option>Pix</option>
+    <option>Dinheiro</option>
+    <option>Cartão de Débito</option>
+    <option>Cartão de Crédito</option>
   </select>
 
   <label>Data</label>
   <input type="date" id="data" />
-<script>
-  // Bloquear datas passadas
-  const dataInput = document.getElementById('data');
-  const hoje = new Date().toISOString().split('T')[0];
-  dataInput.setAttribute('min', hoje);
-
-  // Bloquear toda quinta-feira (dia de folga)
-  dataInput.addEventListener('change', () => {
-    const dataSelecionada = new Date(dataInput.value + 'T00:00:00');
-    const diaSemana = dataSelecionada.getDay(); // 4 = quinta-feira
-
-    if (diaSemana === 4) {
-      mostrarModalGenerico('Aviso','Não Atendemos de quinta.');
-      dataInput.value = '';
-      document.getElementById('hora').innerHTML = '';
-    }
-  });
-function mostrarModal() {
-  document.getElementById('modal').style.display = 'flex';
-}
-
-function fecharModal() {
-  document.getElementById('modal').style.display = 'none';
-}
-function cancelarAgendamento() {
-  const telefone = document.getElementById('telefone').value;
-  const data = document.getElementById('data').value;
-  const hora = document.getElementById('hora').value;
-
-  if (!telefone || !data || !hora) {
-    mostrarModalGenerico('Aviso','Preencha todos os campos corretamente.');
-    return;
-  }
-
-  let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
-
-  const totalAntes = agendamentos.length;
-
-  agendamentos = agendamentos.filter(a => !(a.telefone === telefone && a.data === data && a.hora === hora));
-
-  if (agendamentos.length === totalAntes) {
-    mostrarModalGenerico('Aviso','Preencha todos os campos corretamente.');
-    return;
-  }
-
-  localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
-
-  mostrarModalGenerico('Aviso','Preencha todos os campos corretamente.');
-
-  carregarHorarios();
-}
-function mostrarModalGenerico(titulo, mensagem) {
-  const modal = document.getElementById('modal');
-  modal.querySelector('h2').innerText = titulo;
-  modal.querySelector('p').innerText = mensagem;
-  modal.style.display = 'flex';
-}
-
-function fecharModal() {
-  document.getElementById('modal').style.display = 'none';
-}
-</script>
 
   <label>Horário</label>
   <select id="hora"></select>
 
-  <button onclick="agendar()">Confirmar</button>
-
-  <button onclick="cancelarAgendamento()" style="margin-top:10px;background:#444;color:#fff;">Cancelar Agendamento</button>
-
-  <div class="success" id="success">Agendamento confirmado!</div>
-
-<!-- Modal de confirmação -->
-<div id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; z-index:999;">
-  <div style="background:#1c1c1c; padding:24px; border-radius:16px; max-width:320px; width:90%; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.6);">
-    <h2 style="margin-top:0; color:#c89b3c;">✅ Agendamento Confirmado</h2>
-    <p style="margin:16px 0;">Obrigado pela preferência 🙏<br>Seu horário foi reservado com sucesso.</p>
-    <button onclick="fecharModal()" style="background:#c89b3c; border:none; padding:10px 20px; border-radius:10px; font-weight:bold; cursor:pointer;">Fechar</button>
-  </div>
+  <button onclick="agendar()">Confirmar Agendamento</button>
+  <a href="cancelar.html" class="cancelar">Cancelar Agendamento</a>
 </div>
+
+<!-- MODAL -->
+<div id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); align-items:center; justify-content:center; z-index:999;">
+  <div style="background:#1c1c1c; padding:24px; border-radius:16px; max-width:320px; width:90%; text-align:center;">
+    <h2 id="modalTitulo" style="color:#c89b3c;margin-top:0"></h2>
+    <p id="modalMensagem"></p>
+    <button onclick="fecharModal()" style="background:#c89b3c;border:none;padding:10px 20px;border-radius:10px;font-weight:bold;">OK</button>
+  </div>
 </div>
 
 <script>
-const barbeiroWhatsApp = '5515991092185'; // TROQUE PELO NÚMERO DO BARBEIRO
-
+const barbeiroWhatsApp = '5515991092185';
 const horariosBase = ['08:00','09:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
 
-function carregarHorarios() {
-  const data = document.getElementById('data').value;
-  const select = document.getElementById('hora');
-  select.innerHTML = '';
+const hoje = new Date().toISOString().split('T')[0];
+document.getElementById('data').min = hoje;
 
-  const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
-  const ocupados = agendamentos.filter(a => a.data === data).map(a => a.hora);
-
-  horariosBase.forEach(h => {
-    if (!ocupados.includes(h)) {
-      const opt = document.createElement('option');
-      opt.value = h;
-      opt.textContent = h;
-      select.appendChild(opt);
-    }
-  });
+function mostrarModal(titulo, mensagem) {
+  modalTitulo.innerText = titulo;
+  modalMensagem.innerText = mensagem;
+  modal.style.display = 'flex';
 }
-
-document.getElementById('data').addEventListener('change', carregarHorarios);
+function fecharModal(){ modal.style.display = 'none'; }
 
 function atualizarValor() {
-  const servicoSelect = document.getElementById('servico');
-  const valor = servicoSelect.options[servicoSelect.selectedIndex].dataset.valor;
-  document.getElementById('valor').innerText = `Valor: R$ ${valor}`;
+  const s = servico.options[servico.selectedIndex];
+  valor.innerText = `Valor: R$ ${s.dataset.valor}`;
 }
+servico.addEventListener('change', atualizarValor);
 
-document.getElementById('servico').addEventListener('change', atualizarValor);
+function carregarHorarios() {
+  hora.innerHTML = '';
+  const dataSel = data.value;
+  if (!dataSel) return;
 
-function agendar() {
-  const nome = document.getElementById('nome').value;
-  const telefone = document.getElementById('telefone').value;
-  const servicoSelect = document.getElementById('servico');
-  const servico = servicoSelect.value;
-  const valor = servicoSelect.options[servicoSelect.selectedIndex].dataset.valor;
-  const data = document.getElementById('data').value;
-  const hora = document.getElementById('hora').value;
-
-  if (!nome || !telefone || !data || !hora) {
-    mostrarModalGenerico('Aviso','Preencha todos os campos corretamente.');
+  const d = new Date(dataSel + 'T00:00');
+  if (d.getDay() === 4) {
+    mostrarModal('Dia indisponível','Não atendemos às quintas-feiras.');
+    data.value = '';
     return;
   }
 
-  const pagamento = document.getElementById('pagamento').value;
+  const ag = JSON.parse(localStorage.getItem('agendamentos')) || [];
+  const ocupados = ag.filter(a=>a.data===dataSel).map(a=>a.hora);
 
-  const agendamento = { nome, telefone, servico, valor, pagamento, data, hora };
+  horariosBase.forEach(h=>{
+    if(!ocupados.includes(h)){
+      const o = document.createElement('option');
+      o.value = h; o.textContent = h;
+      hora.appendChild(o);
+    }
+  });
+}
+data.addEventListener('change', carregarHorarios);
 
-  const agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
-  agendamentos.push(agendamento);
-  localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+function agendar() {
+  if (!nome.value || !telefone.value || !data.value || !hora.value) {
+    mostrarModal('Atenção','Preencha todos os campos.');
+    return;
+  }
 
-  const dataFormatada = data.split('-').reverse().join('/');
+  const s = servico.options[servico.selectedIndex];
+  const agendamento = {
+    nome: nome.value,
+    telefone: telefone.value,
+    servico: s.value,
+    valor: s.dataset.valor,
+    pagamento: pagamento.value,
+    data: data.value,
+    hora: hora.value
+  };
 
-  const mensagem = `📅 NOVO AGENDAMENTO%0A👤 ${nome}%0A📞 ${telefone}%0A✂️ ${servico}%0A💰 R$ ${valor}%0A💳 ${pagamento}%0A📆 ${dataFormatada}%0A⏰ ${hora}`;
+  const lista = JSON.parse(localStorage.getItem('agendamentos')) || [];
+  lista.push(agendamento);
+  localStorage.setItem('agendamentos', JSON.stringify(lista));
 
-  window.open(`https://wa.me/${barbeiroWhatsApp}?text=${mensagem}`, '_blank');
+  const dataFmt = agendamento.data.split('-').reverse().join('/');
+  const msg = `📅 NOVO AGENDAMENTO%0A👤 ${agendamento.nome}%0A📞 ${agendamento.telefone}%0A✂️ ${agendamento.servico}%0A💰 R$ ${agendamento.valor}%0A💳 ${agendamento.pagamento}%0A📆 ${dataFmt}%0A⏰ ${agendamento.hora}`;
 
-  document.getElementById('success').style.display = 'block';
+  window.open(`https://wa.me/${barbeiroWhatsApp}?text=${msg}`, '_blank');
 
-  mostrarModal();
+  mostrarModal('Agendamento confirmado ✅','Obrigado pela preferência! \nSeu horário foi reservado.');
   carregarHorarios();
 }
 </script>
