@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cancelar Agendamento</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background:#111;
+      color:#fff;
+      font-family:Arial;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      margin:0;
+    }
+    .box {
+      background:#1c1c1c;
+      padding:24px;
+      border-radius:16px;
+      width:100%;
+      max-width:360px;
+      box-shadow:0 10px 30px rgba(0,0,0,.6);
+    }
+    h2 { text-align:center; }
+    label { margin-top:12px; display:block; }
+    input, button {
+      width:100%;
+      padding:10px;
+      margin-top:6px;
+      border:none;
+      border-radius:8px;
+    }
+    input { background:#2a2a2a; color:#fff; }
+    button {
+      margin-top:20px;
+      background:#c89b3c;
+      font-weight:bold;
+      cursor:pointer;
+    }
+    a {
+      display:block;
+      text-align:center;
+      margin-top:15px;
+      color:#aaa;
+      text-decoration:none;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Cancelar Agendamento</h2>
+
+    <label>Telefone</label>
+    <input id="telefone">
+
+    <label>Data</label>
+    <input type="date" id="data">
+
+    <label>Horário</label>
+    <input type="time" id="hora">
+
+    <button onclick="cancelar()">Cancelar</button>
+    <a href="index.html">Voltar</a>
+  </div>
+
+<script>
+function cancelar() {
+  const telefone = telefone.value;
+  const data = data.value;
+  const hora = hora.value;
+
+  let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
+
+  const antes = agendamentos.length;
+  agendamentos = agendamentos.filter(a => !(a.telefone === telefone && a.data === data && a.hora === hora));
+
+  if (agendamentos.length === antes) {
+    alert('Agendamento não encontrado');
+    return;
+  }
+
+  localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
+  alert('Agendamento cancelado com sucesso');
+  window.location.href = 'index.html';
+}
+</script>
+</body>
+</html>
