@@ -1,89 +1,128 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Cancelar Agendamento</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cancelar Agendamento | Barbearia</title>
   <style>
     body {
-      background:#111;
-      color:#fff;
-      font-family:Arial;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      min-height:100vh;
-      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
     }
-    .box {
-      background:#1c1c1c;
-      padding:24px;
-      border-radius:16px;
-      width:100%;
-      max-width:360px;
-      box-shadow:0 10px 30px rgba(0,0,0,.6);
+    .container {
+      background: #1c1c1c;
+      padding: 24px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
     }
-    h2 { text-align:center; }
-    label { margin-top:12px; display:block; }
+    h1 { text-align: center; margin-bottom: 10px; }
+    label { display:block; margin-top:12px; }
     input, button {
       width:100%;
       padding:10px;
       margin-top:6px;
       border:none;
       border-radius:8px;
+      font-size:14px;
     }
     input { background:#2a2a2a; color:#fff; }
     button {
       margin-top:20px;
-      background:#c89b3c;
+      background:#c0392b;
       font-weight:bold;
       cursor:pointer;
     }
-    a {
+    a.voltar {
       display:block;
+      margin-top:10px;
       text-align:center;
-      margin-top:15px;
-      color:#aaa;
+      background:#444;
+      color:#fff;
+      padding:10px;
+      border-radius:8px;
       text-decoration:none;
     }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h2>Cancelar Agendamento</h2>
-
-    <label>Telefone</label>
-    <input id="telefone">
-
-    <label>Data</label>
-    <input type="date" id="data">
-
-    <label>Horário</label>
-    <input type="time" id="hora">
-
-    <button onclick="cancelar()">Cancelar</button>
-    <a href="index.html">Voltar</a>
+<div class="container">
+  <div style="text-align:center;margin-bottom:10px;">
+    <img src="logo.png" style="max-width:140px;width:100%;" />
   </div>
 
+  <h1>Cancelar Agendamento</h1>
+
+  <label>Nome</label>
+  <input id="nome" />
+
+  <label>Telefone</label>
+  <input id="telefone" />
+
+  <label>Data</label>
+  <input type="date" id="data" />
+
+  <label>Horário</label>
+  <input type="time" id="hora" />
+
+  <button onclick="cancelar()">Confirmar Cancelamento</button>
+  <a href="index.html" class="voltar">Voltar</a>
+</div>
+
+<!-- MODAL -->
+<div id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); align-items:center; justify-content:center; z-index:999;">
+  <div style="background:#1c1c1c; padding:24px; border-radius:16px; max-width:320px; width:90%; text-align:center;">
+    <h2 id="modalTitulo" style="color:#c0392b;margin-top:0"></h2>
+    <p id="modalMensagem"></p>
+    <button onclick="fecharModal()" style="background:#c0392b;border:none;padding:10px 20px;border-radius:10px;font-weight:bold;">OK</button>
+  </div>
+</div>
+
 <script>
+const barbeiroWhatsApp = '5515991092185';
+
+function mostrarModal(titulo, mensagem) {
+  modalTitulo.innerText = titulo;
+  modalMensagem.innerText = mensagem;
+  modal.style.display = 'flex';
+}
+function fecharModal(){ modal.style.display = 'none'; }
+
 function cancelar() {
-  const telefone = telefone.value;
-  const data = data.value;
-  const hora = hora.value;
-
-  let agendamentos = JSON.parse(localStorage.getItem('agendamentos')) || [];
-
-  const antes = agendamentos.length;
-  agendamentos = agendamentos.filter(a => !(a.telefone === telefone && a.data === data && a.hora === hora));
-
-  if (agendamentos.length === antes) {
-    alert('Agendamento não encontrado');
+  if (!nome.value || !telefone.value || !data.value || !hora.value) {
+    mostrarModal('Atenção','Preencha todos os campos.');
     return;
   }
 
-  localStorage.setItem('agendamentos', JSON.stringify(agendamentos));
-  alert('Agendamento cancelado com sucesso');
-  window.location.href = 'index.html';
+  let lista = JSON.parse(localStorage.getItem('agendamentos')) || [];
+  const antes = lista.length;
+
+  lista = lista.filter(a => !(a.nome === nome.value && a.telefone === telefone.value && a.data === data.value && a.hora === hora.value));
+
+  if (lista.length === antes) {
+    mostrarModal('Não encontrado','Nenhum agendamento encontrado com esses dados.');
+    return;
+  }
+
+  localStorage.setItem('agendamentos', JSON.stringify(lista));
+
+  const dataFmt = data.value.split('-').reverse().join('/');
+  const msg = `❌ AGENDAMENTO CANCELADO%0A👤 ${nome.value}%0A📞 ${telefone.value}%0A📆 ${dataFmt}%0A⏰ ${hora.value}`;
+
+  window.open(`https://wa.me/${barbeiroWhatsApp}?text=${msg}`, '_blank');
+
+  mostrarModal('Cancelamento confirmado ✅','Seu agendamento foi cancelado com sucesso.\nO horário já está liberado.');
+
+  setTimeout(() => {
+    window.location.href = 'index.html';
+  }, 2000);
 }
 </script>
 </body>
